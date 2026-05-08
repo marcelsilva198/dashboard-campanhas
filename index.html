@@ -9,7 +9,7 @@
 <style>
   :root {
     --bg: #0B2456;
-    --bg-card: #FFFFFF;
+    --bg-card: #F6F8FC;
     --bg-elev: #F1F3F7;
     --bg-deep: #E8EBF0;
     --border: rgba(255,255,255,0.12);
@@ -46,9 +46,12 @@
   .header-blob::after { content: ""; position: absolute; top: 22px; right: -36px;
     width: 50px; height: 50px; border-radius: 50%; background: var(--gold); opacity: 0.25; }
 
-  .filter-bar { background: var(--bg-card); border: 1px solid var(--border);
-    border-radius: 10px; padding: 12px 14px; margin-bottom: 12px;
-    display: flex; flex-wrap: wrap; gap: 12px 14px; align-items: center; }
+  .filter-bar { background: linear-gradient(180deg, #F8FAFE 0%, #EEF3FA 100%); border: 1px solid rgba(8,24,56,0.08);
+    border-radius: 18px; padding: 16px 16px 14px; margin-bottom: 14px;
+    display: flex; flex-wrap: wrap; gap: 12px 14px; align-items: center;
+    box-shadow: 0 18px 36px rgba(4, 18, 43, 0.10), 0 3px 10px rgba(4, 18, 43, 0.05);
+    position: relative; overflow: hidden; }
+  .filter-bar::before { content:""; position:absolute; inset:0 0 auto 0; height:4px; background: linear-gradient(90deg, var(--gold), #FFD95A 45%, rgba(255,255,255,0)); }
   .filter-row { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; width: 100%; }
   .date-group { display: flex; align-items: center; gap: 6px; font-size: 12px; }
   .date-group label { color: var(--gold); font-size: 11px; text-transform: uppercase;
@@ -56,9 +59,8 @@
   .card, .kpi, .filter-bar, .list-card {
     --text: #1A1A1A;
     --text-muted: #5C6470;
-    --border: rgba(0,0,0,0.08);
-    --border-strong: rgba(0,0,0,0.18);
-    box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+    --border: rgba(8,24,56,0.08);
+    --border-strong: rgba(8,24,56,0.16);
   }
   .card, .kpi, .filter-bar, .list-card { color: var(--text); }
   input[type="date"], input[type="search"] { background: var(--bg-elev); border: 1px solid var(--border-strong);
@@ -82,9 +84,10 @@
   .chip.toggle-all { font-style: italic; }
 
   .kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 14px; }
-  .kpi { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px;
-    padding: 16px 18px; position: relative; overflow: hidden; }
-  .kpi::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--gold); }
+  .kpi { background: linear-gradient(180deg, #F8FAFE 0%, #EFF4FB 100%); border: 1px solid var(--border); border-radius: 18px;
+    padding: 18px 18px; position: relative; overflow: hidden;
+    box-shadow: 0 18px 36px rgba(4, 18, 43, 0.10), 0 3px 10px rgba(4, 18, 43, 0.05); }
+  .kpi::before { content: ""; position: absolute; left: 0; top: 0; right: 0; height: 4px; background: linear-gradient(90deg, var(--gold), #FFD95A 45%, rgba(255,255,255,0)); }
   .kpi-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px;
     color: var(--gold); font-weight: 600; margin-bottom: 8px; }
   .kpi-value { font-size: 26px; font-weight: 700; }
@@ -104,12 +107,38 @@
 
   .row-2 { display: grid; grid-template-columns: 1fr 1.2fr; gap: 14px; margin-bottom: 14px; }
   .row-1 { margin-bottom: 14px; }
-  .card { background: var(--bg-card); border: 1px solid var(--border);
-    border-radius: 10px; padding: 18px; }
+  .card { background: linear-gradient(180deg, #F8FAFE 0%, #EFF4FB 100%); border: 1px solid var(--border);
+    border-radius: 18px; padding: 18px; box-shadow: 0 18px 36px rgba(4, 18, 43, 0.10), 0 3px 10px rgba(4, 18, 43, 0.05); position: relative; overflow: hidden; }
+  .card::before { content:""; position:absolute; inset:0 0 auto 0; height:4px; background: linear-gradient(90deg, rgba(244,194,17,0.95), rgba(244,194,17,0.22), rgba(255,255,255,0)); }
   .card-title-row { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
   .card-title { font-size: 12px; font-weight: 600; margin: 0; text-transform: uppercase;
     letter-spacing: 0.8px; color: var(--gold); }
   .hint { font-size: 11px; color: var(--text-muted); font-weight: normal; text-transform: none; letter-spacing: 0; }
+  .status-chips { margin-left: auto; }
+  .chip.status.active { background: var(--gold); color: #1A1A1A; border-color: var(--gold); font-weight: 700; }
+  .chip.status:not(.active) { background: rgba(255,255,255,0.5); }
+  .tabs { flex-wrap: wrap; }
+  .tab { border-top-left-radius: 10px; border-top-right-radius: 10px; }
+  .cidades-grid.dynamic { display:grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; }
+  .cidade-list { background: rgba(246,248,252,0.95); border: 1px solid rgba(8,24,56,0.08); border-radius: 14px; padding: 12px 14px; }
+  .cidade-list h4 { margin:0 0 10px; font-size: 13px; color:#0B2456; }
+  .cidade-row { display:flex; justify-content:space-between; gap:10px; padding:7px 0; border-bottom:1px solid rgba(8,24,56,0.08); }
+  .cidade-row:last-child { border-bottom:none; }
+  .cidade-name { color:#1A1A1A; font-size:12px; }
+  .cidade-count { color:#0B2456; font-weight:700; font-size:12px; }
+  .list-card { display:none !important; }
+  .metric-list { display:flex; flex-direction:column; gap:10px; }
+  .metric-row { display:grid; grid-template-columns: minmax(120px, 1fr) 2.2fr 64px; gap:10px; align-items:center; font-size:12px; }
+  .metric-label { color:#26364C; font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .metric-track { height:18px; background:#E5ECF6; border-radius:999px; overflow:hidden; box-shadow: inset 0 1px 2px rgba(4,18,43,0.05); }
+  .metric-fill { height:100%; border-radius:999px; background: linear-gradient(90deg, #0B2456, #2E7BC9); min-width: 3px; }
+  .metric-fill.gold { background: linear-gradient(90deg, #D99D00, #F4C211); }
+  .metric-fill.green { background: linear-gradient(90deg, #3D8B25, #5DB330); }
+  .metric-value { color:#0B2456; font-weight:800; text-align:right; font-variant-numeric: tabular-nums; }
+  .metric-subnote { font-size:11px; color:var(--text-muted); margin-top:10px; line-height:1.45; }
+  .demo-split { display:grid; grid-template-columns: 1fr; gap:10px; }
+
+
   .empty { padding: 30px 16px; text-align: center; color: var(--text-muted); font-size: 13px; }
 
   .donut-wrap { position: relative; height: 220px; margin-bottom: 14px; }
@@ -289,6 +318,12 @@
       <div class="chips" id="ingresso-chips">
         <span class="chips-label">Ingresso</span>
       </div>
+      <div class="chips status-chips" id="status-chips">
+        <span class="chips-label">Status</span>
+        <button class="chip status active" data-status="pagos">Pagos</button>
+        <button class="chip status" data-status="nao_pagos">Não pagos</button>
+        <button class="chip status" data-status="todos">Todos</button>
+      </div>
       <input type="search" id="campaign-search" placeholder="🔎 buscar tag de campanha…">
     </div>
     <div class="filter-info" id="filter-info"></div>
@@ -296,27 +331,23 @@
 
   <div class="kpis">
     <div class="kpi">
-      <div class="kpi-label">Total de pagos</div>
+      <div class="kpi-label" id="kpi-total-label">Total de pagos</div>
       <div class="kpi-value" id="kpi-total">—<span id="kpi-total-delta"></span></div>
       <div class="kpi-sub" id="kpi-total-sub">analisados</div>
     </div>
     <div class="kpi">
-      <div class="kpi-label">Canal líder</div>
+      <div class="kpi-label" id="kpi-leader-label">Canal líder</div>
       <div class="kpi-value" id="kpi-leader">—</div>
       <div class="kpi-sub" id="kpi-leader-sub">—</div>
     </div>
     <div class="kpi">
-      <div class="kpi-label">Tempo médio de pagto</div>
+      <div class="kpi-label" id="kpi-lt-label">Tempo médio de pagto</div>
       <div class="kpi-value" id="kpi-lt">—</div>
       <div class="kpi-sub" id="kpi-lt-sub">inscrição → pagamento</div>
     </div>
   </div>
 
-  <div class="tabs">
-    <button class="tab active" data-unit="all">Todas as unidades</button>
-    <button class="tab" data-unit="Limeira">Limeira · SLM</button>
-    <button class="tab" data-unit="Arcoverde">Arcoverde · FMS</button>
-  </div>
+  <div class="tabs" id="unit-tabs"></div>
 
   <div class="row-2">
     <div class="card">
@@ -326,7 +357,7 @@
           <canvas id="donut"></canvas>
           <div class="donut-center">
             <div class="num" id="donut-total">—</div>
-            <div class="lbl">pagos</div>
+            <div class="lbl" id="donut-total-label">pagos</div>
           </div>
         </div>
         <div class="legend" id="legend"></div>
@@ -344,8 +375,8 @@
   <div class="row-1">
     <div class="card">
       <div class="card-title-row">
-        <h2 class="card-title">Curva temporal · pagos por dia</h2>
-        <span class="hint">· barra = pagos do dia · linha = média móvel 7d</span>
+        <h2 class="card-title">Curva temporal · registros por dia</h2>
+        <span class="hint">· barra = registros do dia · linha = média móvel 7d</span>
       </div>
       <div class="ts-wrap"><canvas id="ts-chart"></canvas></div>
     </div>
@@ -368,21 +399,46 @@
     </div>
   </div>
 
+  <div class="row-2">
+    <div class="card">
+      <div class="card-title-row">
+        <h2 class="card-title">Forma de pagamento</h2>
+        <span class="hint">· contagem dos pagos no recorte</span>
+      </div>
+      <div class="metric-list" id="payment-count"></div>
+    </div>
+    <div class="card">
+      <div class="card-title-row">
+        <h2 class="card-title">Dias até pagar por método</h2>
+        <span class="hint">· média e mediana por forma de pagamento</span>
+      </div>
+      <div class="metric-list" id="payment-lt"></div>
+    </div>
+  </div>
+
+  <div class="row-2">
+    <div class="card">
+      <div class="card-title-row">
+        <h2 class="card-title">Demográfico · sexo</h2>
+        <span class="hint">· conforme status selecionado</span>
+      </div>
+      <div class="metric-list" id="demo-sexo"></div>
+    </div>
+    <div class="card">
+      <div class="card-title-row">
+        <h2 class="card-title">Demográfico · idade</h2>
+        <span class="hint">· faixas etárias do recorte</span>
+      </div>
+      <div class="metric-list" id="demo-idade"></div>
+    </div>
+  </div>
+
   <div class="row-1">
     <div class="card">
       <div class="card-title-row">
-        <h2 class="card-title">Top cidades de origem dos pagantes</h2>
+        <h2 class="card-title" id="cidades-title">Top cidades do recorte</h2>
       </div>
-      <div class="cidades-grid">
-        <div class="cidade-list">
-          <h4>Limeira · SLM</h4>
-          <div id="cidades-lim"></div>
-        </div>
-        <div class="cidade-list">
-          <h4>Arcoverde · FMS</h4>
-          <div id="cidades-arc"></div>
-        </div>
-      </div>
+      <div class="cidades-grid dynamic" id="cidades-grid"></div>
     </div>
   </div>
 
@@ -447,11 +503,45 @@ const CANAL_CLASS = {
 };
 const CANAL_ORDER = ['Google','Meta','TikTok','E-mail','Orgânico','Social','Outros'];
 
-// Unidades oficiais deste dashboard. A aba "Todas as unidades" soma apenas estas duas,
-// para não incluir registros de outras unidades/ambientes que também aparecem na planilha.
-const DASHBOARD_UNITS = ['Limeira', 'Arcoverde'];
+// Unidades disponíveis dinamicamente a partir da planilha
+let AVAILABLE_UNITS = ['Limeira', 'Arcoverde'];
+const UNIT_LABELS = { Limeira: 'Limeira · SLM', Arcoverde: 'Arcoverde · FMS', Araras: 'Araras · SLM', Campinas: 'Campinas · SLM' };
 function isDashboardUnidade(value) {
-  return DASHBOARD_UNITS.includes(value);
+  return AVAILABLE_UNITS.includes(value);
+}
+function unitLabel(value) { return UNIT_LABELS[value] || value || 'Sem unidade'; }
+function normalizeUnitName(value) {
+  const original = (value == null ? '' : String(value)).trim();
+  const s = original.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+  if (!s) return '';
+  if (s.includes('araras')) return 'Araras';
+  if (s.includes('campinas')) return 'Campinas';
+  if (s.includes('limeira')) return 'Limeira';
+  if (s.includes('arcoverde') || s.includes('fms') || s.includes('sertao')) return 'Arcoverde';
+  return original;
+}
+function unitSort(a,b) {
+  const pref = ['Limeira','Arcoverde','Araras','Campinas'];
+  const ia = pref.indexOf(a), ib = pref.indexOf(b);
+  if (ia !== -1 || ib !== -1) {
+    if (ia === -1) return 1;
+    if (ib === -1) return -1;
+    return ia - ib;
+  }
+  return String(a).localeCompare(String(b), 'pt-BR');
+}
+function computeAvailableUnits() {
+  const set = new Set();
+  PAGOS.forEach(r => { if ((r.unidade||'').trim()) set.add(r.unidade); });
+  LEADS.forEach(r => { if ((r.u||'').trim()) set.add(r.u); });
+  const arr = [...set].filter(Boolean).sort(unitSort);
+  return arr.length ? arr : ['Limeira','Arcoverde'];
+}
+function recordKey(r) {
+  return [r.id || '', r.inscricao_numero || '', r.unidade || r.u || '', (r.email || r.e || '')].join('|');
+}
+function getPaidKeySet() {
+  return new Set(PAGOS.map(recordKey));
 }
 
 const SUB_EXPLAIN = {
@@ -477,9 +567,11 @@ let INGRESSO_OPTIONS = ['Vestibular', 'ENEM', 'Transf. Grupo III', '2ª Graduaç
 
 let pieChart = null, tsChart = null;
 let currentUnit = 'all';
+let currentStatus = 'pagos';
 let openSubs = new Set();
 let activeIngressos = new Set(INGRESSO_OPTIONS);
 let campaignQuery = '';
+let PAID_KEY_SET = new Set();
 
 function shiftDays(iso, days) {
   const d = new Date(iso + 'T12:00:00');
@@ -548,36 +640,97 @@ function normalizeIngressoLabel(value) {
   return original || 'Outros';
 }
 
+
+function normalizeMetodoLabel(value) {
+  const original = (value == null ? '' : String(value)).trim();
+  const s = original.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  if (!s) return 'Não informado';
+  if (s.includes('pix')) return 'Pix';
+  if (s.includes('boleto') || s.includes('codigo de barra') || s.includes('código de barra') || s.includes('barra')) return 'Boleto';
+  if (s.includes('cartao') || s.includes('cartão') || s.includes('credito') || s.includes('crédito') || s.includes('credit')) return 'Cartão de crédito';
+  if (s.includes('debito') || s.includes('débito') || s.includes('debit')) return 'Cartão de débito';
+  if (s.includes('mercado')) return 'Mercado Pago';
+  return original || 'Não informado';
+}
+function normalizeSexoLabel(value) {
+  const original = (value == null ? '' : String(value)).trim();
+  const s = original.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  if (!s) return 'Não informado';
+  if (s === 'f' || s.startsWith('fem')) return 'Feminino';
+  if (s === 'm' || s.startsWith('masc')) return 'Masculino';
+  return original || 'Não informado';
+}
+function parseDateAny(value) {
+  const raw = (value == null ? '' : String(value)).trim();
+  if (!raw) return null;
+  let m = raw.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+  if (m) return new Date(Number(m[1]), Number(m[2])-1, Number(m[3]));
+  m = raw.match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{2,4})/);
+  if (m) {
+    let y = Number(m[3]); if (y < 100) y += 2000;
+    return new Date(y, Number(m[2])-1, Number(m[1]));
+  }
+  const d = new Date(raw);
+  return isNaN(d.getTime()) ? null : d;
+}
+function calcAge(value) {
+  if (typeof value === 'number' && isFinite(value) && value > 0 && value < 120) return Math.round(value);
+  const d = parseDateAny(value);
+  if (!d) return null;
+  const now = new Date();
+  let age = now.getFullYear() - d.getFullYear();
+  const m = now.getMonth() - d.getMonth();
+  if (m < 0 || (m === 0 && now.getDate() < d.getDate())) age--;
+  return age >= 0 && age < 120 ? age : null;
+}
+function ageGroup(age) {
+  if (age == null) return 'Não informado';
+  if (age <= 17) return 'Até 17';
+  if (age <= 20) return '18–20';
+  if (age <= 24) return '21–24';
+  if (age <= 29) return '25–29';
+  if (age <= 39) return '30–39';
+  return '40+';
+}
+
 function normalizeLoadedRows() {
   PAGOS = PAGOS.map(r => ({
     ...r,
-    unidade: r.unidade || r.u || '',
+    unidade: normalizeUnitName(r.unidade || r.u || ''),
     iso: r.iso || r.i || '',
     insc_iso: r.insc_iso || r.i || '',
     canal: r.canal || r.c || 'Outros',
     subcanal: r.subcanal || r.s || 'Não rastreado',
     stage: r.stage || r.sg || 'Orgânico',
     tag: r.tag || r.t || '',
-    ingresso: normalizeIngressoLabel(r.ingresso || r.g)
+    ingresso: normalizeIngressoLabel(r.ingresso || r.g),
+    metodo_pgto: normalizeMetodoLabel(r.metodo_pgto || r.metodo || r.mp),
+    sexo: normalizeSexoLabel(r.sexo || r.sx),
+    idade: calcAge(r.idade || r.data_nascimento || r.nascimento || r.dn),
+    idade_fx: ageGroup(calcAge(r.idade || r.data_nascimento || r.nascimento || r.dn))
   }));
 
   LEADS = LEADS.map(r => ({
     ...r,
-    u: r.u || r.unidade || '',
+    u: normalizeUnitName(r.u || r.unidade || ''),
     i: r.i || r.iso || r.insc_iso || '',
     c: r.c || r.canal || 'Outros',
     s: r.s || r.subcanal || 'Não rastreado',
     sg: r.sg || r.stage || 'Orgânico',
     t: r.t || r.tag || '',
-    g: normalizeIngressoLabel(r.g || r.ingresso)
+    g: normalizeIngressoLabel(r.g || r.ingresso),
+    mp: normalizeMetodoLabel(r.mp || r.metodo_pgto || r.metodo),
+    sx: normalizeSexoLabel(r.sx || r.sexo),
+    idade: calcAge(r.idade || r.data_nascimento || r.nascimento || r.dn),
+    idade_fx: ageGroup(calcAge(r.idade || r.data_nascimento || r.nascimento || r.dn))
   }));
 }
 
 function rebuildIngressoOptions() {
   const preferred = ['Vestibular', 'ENEM', 'Transf. Grupo III', '2ª Graduação', 'Transf. Grupo II', 'Cert. Internacional', 'Outros'];
   const found = new Set();
-  PAGOS.forEach(r => { if (isDashboardUnidade(r.unidade) && r.ingresso) found.add(r.ingresso); });
-  LEADS.forEach(r => { if (isDashboardUnidade(r.u) && r.g) found.add(r.g); });
+  PAGOS.forEach(r => { if ((r.unidade||'').trim() && r.ingresso) found.add(r.ingresso); });
+  LEADS.forEach(r => { if ((r.u||'').trim() && r.g) found.add(r.g); });
 
   const ordered = preferred.filter(x => found.has(x));
   const extra = [...found].filter(x => !preferred.includes(x)).sort((a,b) => a.localeCompare(b, 'pt-BR'));
@@ -588,11 +741,7 @@ function rebuildIngressoOptions() {
 
 function filterPagos(unit, fromIso, toIso, ingressos, q) {
   return PAGOS.filter(r => {
-    if (unit === 'all') {
-      if (!isDashboardUnidade(r.unidade)) return false;
-    } else if (r.unidade !== unit) {
-      return false;
-    }
+    if (unit !== 'all' && r.unidade !== unit) return false;
     if (!r.iso || r.iso < fromIso || r.iso > toIso) return false;
     if (ingressos && !ingressos.has(r.ingresso)) return false;
     if (q && !(r.tag||'').toLowerCase().includes(q)) return false;
@@ -601,21 +750,23 @@ function filterPagos(unit, fromIso, toIso, ingressos, q) {
 }
 function filterLeads(unit, fromIso, toIso, ingressos, q) {
   return LEADS.filter(r => {
-    if (unit === 'all') {
-      if (!isDashboardUnidade(r.u)) return false;
-    } else if (r.u !== unit) {
-      return false;
-    }
+    if (unit !== 'all' && r.u !== unit) return false;
     if (!r.i || r.i < fromIso || r.i > toIso) return false;
     if (ingressos && !ingressos.has(r.g)) return false;
     if (q && !(r.t||'').toLowerCase().includes(q)) return false;
     return true;
   });
 }
+function getFilteredDatasets(unit, fromIso, toIso, ingressos, q) {
+  const pagos = filterPagos(unit, fromIso, toIso, ingressos, q);
+  const leads = filterLeads(unit, fromIso, toIso, ingressos, q);
+  const naoPagos = leads.filter(r => !PAID_KEY_SET.has(recordKey(r)));
+  const allRecords = leads;
+  return { pagos, leads, naoPagos, allRecords };
+}
 
 function buildIngressoChips() {
   const el = document.getElementById('ingresso-chips');
-  // Toggle all chip
   let html = '<span class="chips-label">Ingresso</span>';
   html += '<button class="chip toggle-all" data-action="all">Todos</button>';
   INGRESSO_OPTIONS.forEach(opt => {
@@ -626,18 +777,13 @@ function buildIngressoChips() {
     b.addEventListener('click', () => {
       const opt = b.dataset.ingresso;
       if (activeIngressos.has(opt)) activeIngressos.delete(opt); else activeIngressos.add(opt);
-      // ensure at least one active
       if (activeIngressos.size === 0) activeIngressos = new Set(INGRESSO_OPTIONS);
       syncIngressoChips();
       render();
     });
   });
   el.querySelector('.chip[data-action="all"]').addEventListener('click', () => {
-    if (activeIngressos.size === INGRESSO_OPTIONS.length) {
-      activeIngressos = new Set(['Vestibular']); // default singular
-    } else {
-      activeIngressos = new Set(INGRESSO_OPTIONS);
-    }
+    activeIngressos = (activeIngressos.size === INGRESSO_OPTIONS.length) ? new Set([INGRESSO_OPTIONS[0]]) : new Set(INGRESSO_OPTIONS);
     syncIngressoChips();
     render();
   });
@@ -645,6 +791,34 @@ function buildIngressoChips() {
 function syncIngressoChips() {
   document.querySelectorAll('.chip[data-ingresso]').forEach(b => {
     b.classList.toggle('active', activeIngressos.has(b.dataset.ingresso));
+  });
+}
+function buildStatusChips() {
+  const wrap = document.getElementById('status-chips');
+  if (!wrap) return;
+  wrap.querySelectorAll('.chip.status').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.status === currentStatus);
+    btn.onclick = () => {
+      currentStatus = btn.dataset.status;
+      buildStatusChips();
+      render();
+    };
+  });
+}
+function buildUnitTabs() {
+  const wrap = document.getElementById('unit-tabs');
+  if (!wrap) return;
+  let html = `<button class="tab ${currentUnit==='all'?'active':''}" data-unit="all">Todas as unidades</button>`;
+  AVAILABLE_UNITS.forEach(u => {
+    html += `<button class="tab ${currentUnit===u?'active':''}" data-unit="${escapeHtml(u)}">${escapeHtml(unitLabel(u))}</button>`;
+  });
+  wrap.innerHTML = html;
+  wrap.querySelectorAll('.tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      currentUnit = btn.dataset.unit;
+      buildUnitTabs();
+      render();
+    });
   });
 }
 
@@ -804,20 +978,87 @@ function renderLeadTime(pagos) {
   }).join('');
 }
 
-function renderCidades(pagos) {
-  ['Limeira','Arcoverde'].forEach(u => {
-    const sub = pagos.filter(r => r.unidade === u);
-    const counts = {};
-    sub.forEach(r => { const c = (r.cidade || '—').trim() || '—'; counts[c] = (counts[c]||0) + 1; });
-    const sorted = Object.entries(counts).sort((a,b) => b[1]-a[1]).slice(0, 8);
-    const elId = u === 'Limeira' ? 'cidades-lim' : 'cidades-arc';
-    const el = document.getElementById(elId);
-    if (!sorted.length) { el.innerHTML = '<div class="empty" style="padding:14px">Sem dados</div>'; return; }
-    el.innerHTML = sorted.map(([cidade, n]) => `<div class="cidade-row">
-      <div class="cidade-name">${escapeHtml(cidade)}</div>
-      <div class="cidade-count">${n}</div>
-    </div>`).join('');
+
+function countBy(records, getter) {
+  const counts = {};
+  records.forEach(r => {
+    const key = getter(r) || 'Não informado';
+    counts[key] = (counts[key] || 0) + 1;
   });
+  return Object.entries(counts).sort((a,b)=> b[1]-a[1]);
+}
+function renderMetricBars(elId, rows, opts = {}) {
+  const el = document.getElementById(elId);
+  if (!el) return;
+  if (!rows || !rows.length) { el.innerHTML = '<div class="empty" style="padding:18px 4px">Sem dados</div>'; return; }
+  const total = opts.total || rows.reduce((a,r)=>a+(r.count || r[1] || 0),0) || 1;
+  const max = Math.max(...rows.map(r => r.count || r[1] || 0), 1);
+  el.innerHTML = rows.map((row, idx) => {
+    const label = row.label != null ? row.label : row[0];
+    const count = row.count != null ? row.count : row[1];
+    const pct = total ? Math.round(100 * count / total) : 0;
+    const w = Math.max(3, 100 * count / max).toFixed(1);
+    const fillClass = opts.fillClass || (idx === 0 ? 'gold' : '');
+    const value = opts.valueFormatter ? opts.valueFormatter(row, total) : `${count} (${pct}%)`;
+    return `<div class="metric-row"><div class="metric-label" title="${escapeHtml(label)}">${escapeHtml(label)}</div><div class="metric-track"><div class="metric-fill ${fillClass}" style="width:${w}%"></div></div><div class="metric-value">${value}</div></div>`;
+  }).join('') + (opts.note ? `<div class="metric-subnote">${opts.note}</div>` : '');
+}
+function renderPaymentMethods(pagos) {
+  const methodRows = countBy(pagos, r => r.metodo_pgto || r.mp || 'Não informado')
+    .map(([label,count]) => ({ label, count }));
+  renderMetricBars('payment-count', methodRows, { total: pagos.length, fillClass: 'gold', note: 'Base: apenas inscrições pagas dentro dos filtros selecionados.' });
+
+  const byMethod = {};
+  pagos.forEach(r => {
+    const m = r.metodo_pgto || r.mp || 'Não informado';
+    if (r.lt == null) return;
+    byMethod[m] = byMethod[m] || [];
+    byMethod[m].push(Number(r.lt));
+  });
+  const rows = Object.entries(byMethod).map(([label, vals]) => ({
+    label,
+    count: vals.length,
+    avg: vals.reduce((a,b)=>a+b,0)/vals.length,
+    med: median(vals)
+  })).sort((a,b)=> b.avg - a.avg);
+  const el = document.getElementById('payment-lt');
+  if (!rows.length) { el.innerHTML = '<div class="empty" style="padding:18px 4px">Sem dados de tempo de pagamento</div>'; return; }
+  const maxAvg = Math.max(...rows.map(r=>r.avg), 1);
+  el.innerHTML = rows.map(r => {
+    const w = Math.max(3, 100 * r.avg / maxAvg).toFixed(1);
+    return `<div class="metric-row"><div class="metric-label" title="${escapeHtml(r.label)}">${escapeHtml(r.label)}</div><div class="metric-track"><div class="metric-fill green" style="width:${w}%"></div></div><div class="metric-value">${r.avg.toFixed(1)}d</div></div><div class="metric-subnote" style="margin-top:-6px">${escapeHtml(r.label)}: mediana ${r.med}d · n=${r.count}</div>`;
+  }).join('');
+}
+function renderDemografia(records) {
+  const sexoRows = countBy(records, r => r.sexo || r.sx || 'Não informado').map(([label,count]) => ({label,count}));
+  renderMetricBars('demo-sexo', sexoRows, { total: records.length, fillClass: 'gold' });
+
+  const order = ['Até 17','18–20','21–24','25–29','30–39','40+','Não informado'];
+  const counts = {};
+  records.forEach(r => {
+    const fx = r.idade_fx || ageGroup(r.idade);
+    counts[fx] = (counts[fx] || 0) + 1;
+  });
+  const ageRows = order.filter(k => counts[k]).map(k => ({ label: k, count: counts[k] }));
+  Object.keys(counts).filter(k => !order.includes(k)).sort().forEach(k => ageRows.push({ label: k, count: counts[k] }));
+  renderMetricBars('demo-idade', ageRows, { total: records.length });
+}
+
+function renderCidades(records) {
+  const wrap = document.getElementById('cidades-grid');
+  const title = document.getElementById('cidades-title');
+  if (!wrap) return;
+  const units = currentUnit === 'all' ? AVAILABLE_UNITS : [currentUnit];
+  title.textContent = currentStatus === 'pagos' ? 'Top cidades de origem dos pagantes' : 'Top cidades do recorte';
+  const blocks = units.map(u => {
+    const sub = records.filter(r => (r.unidade || r.u) === u);
+    const counts = {};
+    sub.forEach(r => { const c = ((r.cidade || '—')+'').trim() || '—'; counts[c] = (counts[c]||0) + 1; });
+    const sorted = Object.entries(counts).sort((a,b)=> b[1]-a[1]).slice(0,8);
+    const inner = sorted.length ? sorted.map(([cidade,n]) => `<div class="cidade-row"><div class="cidade-name">${escapeHtml(cidade)}</div><div class="cidade-count">${n}</div></div>`).join('') : '<div class="empty" style="padding:12px 4px">Sem dados</div>';
+    return `<div class="cidade-list"><h4>${escapeHtml(unitLabel(u))}</h4>${inner}</div>`;
+  });
+  wrap.innerHTML = blocks.join('');
 }
 
 function render() {
@@ -830,14 +1071,35 @@ function render() {
   });
 
   const q = (campaignQuery || '').toLowerCase();
-  const data = filterPagos(currentUnit, fromIso, toIso, activeIngressos, q);
-  const leadsData = filterLeads(currentUnit, fromIso, toIso, activeIngressos, q);
+  const ds = getFilteredDatasets(currentUnit, fromIso, toIso, activeIngressos, q);
+  const paidData = ds.pagos;
+  const leadsData = ds.leads;
+  const naoPagosData = ds.naoPagos;
+  const allData = ds.allRecords;
 
-  // Período anterior (mesmo tamanho)
+  let data = paidData;
+  let viewLabel = 'pagos';
+  let totalLabel = 'Total de pagos';
+  let totalSub = 'pagos confirmados';
+  if (currentStatus === 'nao_pagos') {
+    data = naoPagosData;
+    viewLabel = 'não pagos';
+    totalLabel = 'Total não pagos';
+    totalSub = 'inscrições ainda não pagas';
+  } else if (currentStatus === 'todos') {
+    data = allData;
+    viewLabel = 'inscrições';
+    totalLabel = 'Total de inscrições';
+    totalSub = 'pagos + não pagos';
+  }
+
   const days = diffDays(fromIso, toIso);
   const prevTo = shiftDays(fromIso, -1);
   const prevFrom = shiftDays(prevTo, -(days-1));
-  const prevData = filterPagos(currentUnit, prevFrom, prevTo, activeIngressos, q);
+  const prevDs = getFilteredDatasets(currentUnit, prevFrom, prevTo, activeIngressos, q);
+  let prevData = prevDs.pagos;
+  if (currentStatus === 'nao_pagos') prevData = prevDs.naoPagos;
+  if (currentStatus === 'todos') prevData = prevDs.allRecords;
 
   const total = data.length;
   const sameDay = fromIso === toIso;
@@ -847,12 +1109,12 @@ function render() {
   else if (sameDay) info = 'Período: ' + fmtBR(fromIso);
   else info = 'Período: ' + fmtBR(fromIso) + ' – ' + fmtBR(toIso) + ' · ' + days + ' dias';
   if (!fullRange) info += ' · vs período anterior (' + fmtBR(prevFrom) + ' – ' + fmtBR(prevTo) + ')';
-  if (currentUnit === 'all') info += ' · considerando apenas Limeira + Arcoverde';
+  info += currentUnit === 'all' ? ' · todas as unidades visíveis' : ' · unidade: ' + unitLabel(currentUnit);
+  info += ' · status: ' + viewLabel;
   document.getElementById('filter-info').textContent = info;
 
-  // KPIs
-  document.getElementById('kpi-total').firstChild.textContent = total;
-  // Delta
+  document.getElementById('kpi-total-label').textContent = totalLabel;
+  document.getElementById('kpi-total').childNodes[0].textContent = total;
   const deltaEl = document.getElementById('kpi-total-delta');
   if (!fullRange) {
     const diff = total - prevData.length;
@@ -860,89 +1122,74 @@ function render() {
     const sign = diff > 0 ? '+' : '';
     const arrow = diff > 0 ? '▲' : (diff < 0 ? '▼' : '─');
     deltaEl.innerHTML = `<span class="delta ${cls}">${arrow} ${sign}${diff}</span>`;
-  } else {
-    deltaEl.innerHTML = '';
-  }
-  document.getElementById('kpi-total-sub').textContent = currentUnit === 'all' ? 'Limeira + Arcoverde' : 'em ' + currentUnit;
+  } else deltaEl.innerHTML = '';
+  document.getElementById('kpi-total-sub').textContent = totalSub + ' · ' + (currentUnit === 'all' ? 'todas as unidades' : unitLabel(currentUnit));
 
   const canalCounts = {};
   CANAL_ORDER.forEach(c => canalCounts[c] = 0);
-  data.forEach(r => { canalCounts[r.canal] = (canalCounts[r.canal] || 0) + 1; });
+  data.forEach(r => { const canal = r.canal || r.c || 'Outros'; canalCounts[canal] = (canalCounts[canal] || 0) + 1; });
   let leader = { canal: '—', count: 0 };
-  CANAL_ORDER.forEach(c => { if (canalCounts[c] > leader.count) leader = { canal: c, count: canalCounts[c] }; });
-  if (total === 0) leader = { canal: '—', count: 0 };
+  Object.keys(canalCounts).forEach(c => { if (canalCounts[c] > leader.count) leader = { canal: c, count: canalCounts[c] }; });
   const pct = total > 0 ? Math.round(100 * leader.count / total) : 0;
-  document.getElementById('kpi-leader').textContent = leader.canal;
-  document.getElementById('kpi-leader-sub').textContent = total > 0 ? (leader.count + ' pagos · ' + pct + '%') : 'sem dados';
+  document.getElementById('kpi-leader').textContent = total ? leader.canal : '—';
+  document.getElementById('kpi-leader-sub').textContent = total ? (leader.count + ' ' + viewLabel + ' · ' + pct + '%') : 'sem dados';
 
-  // KPI tempo médio (todos os canais juntos)
-  const lts = data.map(r => r.lt).filter(v => v != null);
-  if (lts.length) {
-    const med = median(lts);
-    const avg = lts.reduce((a,b)=>a+b,0)/lts.length;
-    document.getElementById('kpi-lt').textContent = avg.toFixed(1) + 'd';
-    document.getElementById('kpi-lt-sub').textContent = 'mediana ' + med + 'd · n=' + lts.length;
+  document.getElementById('kpi-lt-label').textContent = currentStatus === 'pagos' ? 'Tempo médio de pagto' : 'Tempo médio';
+  if (currentStatus === 'pagos') {
+    const lts = data.map(r => r.lt).filter(v => v != null);
+    if (lts.length) {
+      const med = median(lts);
+      const avg = lts.reduce((a,b)=>a+b,0)/lts.length;
+      document.getElementById('kpi-lt').textContent = avg.toFixed(1) + 'd';
+      document.getElementById('kpi-lt-sub').textContent = 'mediana ' + med + 'd · n=' + lts.length;
+    } else {
+      document.getElementById('kpi-lt').textContent = '—';
+      document.getElementById('kpi-lt-sub').textContent = 'sem dados';
+    }
   } else {
     document.getElementById('kpi-lt').textContent = '—';
-    document.getElementById('kpi-lt-sub').textContent = 'sem dados';
+    document.getElementById('kpi-lt-sub').textContent = 'disponível apenas para pagos';
   }
 
-  // Subcanal aggregation
   const subMap = {};
   data.forEach(r => {
-    const key = r.canal + ' · ' + r.subcanal;
-    if (!subMap[key]) subMap[key] = { canal: r.canal, sub: r.subcanal, key, records: [] };
+    const canal = r.canal || r.c || 'Outros';
+    const subcanal = r.subcanal || r.s || 'Não rastreado';
+    const key = canal + ' · ' + subcanal;
+    if (!subMap[key]) subMap[key] = { canal, sub: subcanal, key, records: [] };
     subMap[key].records.push(r);
   });
   const subList = Object.values(subMap).sort((a,b) => b.records.length - a.records.length);
 
-  // Donut
-  const allCanals = Object.keys(canalCounts).filter(c => canalCounts[c] > 0);
-  const labels = CANAL_ORDER.filter(c => canalCounts[c] > 0).concat(allCanals.filter(c => !CANAL_ORDER.includes(c)));
+  const labels = CANAL_ORDER.filter(c => canalCounts[c] > 0).concat(Object.keys(canalCounts).filter(c => canalCounts[c] > 0 && !CANAL_ORDER.includes(c)));
   const values = labels.map(c => canalCounts[c]);
   const colors = labels.map(c => CANAL_COLORS[c] || CANAL_COLORS['Outros']);
   if (pieChart) { pieChart.destroy(); pieChart = null; }
   const donutArea = document.getElementById('donut-area');
   if (total === 0) {
-    donutArea.innerHTML = '<div class="empty">Sem pagos no período selecionado</div>';
+    donutArea.innerHTML = '<div class="empty">Sem ' + viewLabel + ' no período selecionado</div>';
   } else {
-    if (!document.getElementById('donut')) {
-      donutArea.innerHTML = '<div class="donut-wrap"><canvas id="donut"></canvas>' +
-        '<div class="donut-center"><div class="num" id="donut-total">' + total + '</div><div class="lbl">pagos</div></div>' +
-        '</div><div class="legend" id="legend"></div>';
-    }
-    document.getElementById('donut-total').textContent = total;
+    donutArea.innerHTML = '<div class="donut-wrap"><canvas id="donut"></canvas><div class="donut-center"><div class="num" id="donut-total">'+total+'</div><div class="lbl" id="donut-total-label">'+viewLabel+'</div></div></div><div class="legend" id="legend"></div>';
     if (typeof Chart === 'undefined') {
       document.getElementById('legend').innerHTML = labels.map((c, i) => {
         const v = values[i]; const p = total > 0 ? Math.round(100 * v / total) : 0;
         return '<div class="legend-item"><div class="swatch" style="background:' + colors[i] + '"></div>' + c + ' · ' + v + ' (' + p + '%)</div>';
       }).join('');
     } else {
-    const ctx = document.getElementById('donut').getContext('2d');
-    const cardBg = getComputedStyle(document.body).getPropertyValue('--bg-card').trim() || '#133772';
-    pieChart = new Chart(ctx, {
-      type: 'doughnut',
-      data: { labels, datasets: [{ data: values, backgroundColor: colors, borderWidth: 2, borderColor: cardBg }] },
-      options: {
-        responsive: true, maintainAspectRatio: false, cutout: '65%',
-        plugins: {
-          legend: { display: false },
-          tooltip: { callbacks: { label: function(ctx) {
-            const v = ctx.parsed; const p = total > 0 ? Math.round(100*v/total) : 0;
-            return ctx.label + ': ' + v + ' (' + p + '%)';
-          } } }
-        }
-      }
-    });
-    document.getElementById('legend').innerHTML = labels.map((c, i) => {
-      const v = values[i]; const p = total > 0 ? Math.round(100 * v / total) : 0;
-      return '<div class="legend-item"><div class="swatch" style="background:' + colors[i] + '"></div>' +
-             c + ' · ' + v + ' (' + p + '%)</div>';
-    }).join('');
+      const ctx = document.getElementById('donut').getContext('2d');
+      const cardBg = '#F8FAFE';
+      pieChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: { labels, datasets: [{ data: values, backgroundColor: colors, borderWidth: 2, borderColor: '#F8FAFE' }] },
+        options: { responsive: true, maintainAspectRatio: false, cutout: '65%', plugins: { legend: { display: false }, tooltip: { callbacks: { label: function(ctx) { const v = ctx.parsed; const p = total > 0 ? Math.round(100*v/total) : 0; return ctx.label + ': ' + v + ' (' + p + '%)'; } } } } }
+      });
+      document.getElementById('legend').innerHTML = labels.map((c, i) => {
+        const v = values[i]; const p = total > 0 ? Math.round(100 * v / total) : 0;
+        return '<div class="legend-item"><div class="swatch" style="background:' + colors[i] + '"></div>' + c + ' · ' + v + ' (' + p + '%)</div>';
+      }).join('');
     }
   }
 
-  // Bars com expansão
   const barsEl = document.getElementById('bars');
   if (subList.length === 0) {
     barsEl.innerHTML = '<div class="empty">Sem dados</div>';
@@ -952,23 +1199,11 @@ function render() {
       const count = s.records.length;
       const w = (100 * count / maxCount).toFixed(1);
       const isOpen = openSubs.has(s.key);
-      const explainKey = s.sub;
-      const explain = SUB_EXPLAIN[explainKey] || '';
+      const explain = SUB_EXPLAIN[s.sub] || '';
       const showInfo = explain && (s.sub.includes('Não rastreado') || s.sub.includes('Orgânico') || s.sub.includes('Site') || s.sub.includes('Topo') || s.sub === 'RMKT' || s.sub.includes('RD Station') || s.sub.includes('Instagram'));
-      const infoIcon = showInfo
-        ? '<span class="info-icon tooltip-target">i<span class="tooltip">' + escapeHtml(explain) + '</span></span>'
-        : '';
-      return '<div class="bar-block ' + (isOpen ? 'open' : '') + '" data-key="' + escapeHtml(s.key) + '">' +
-        '<div class="bar-row">' +
-          '<div class="bar-caret">▶</div>' +
-          '<div class="bar-label">' + s.canal + ' · ' + s.sub + infoIcon + '</div>' +
-          '<div class="bar-track"><div class="bar-fill ' + CANAL_CLASS[s.canal] + '" style="width:' + w + '%"></div></div>' +
-          '<div class="bar-value">' + count + '</div>' +
-        '</div>' +
-        buildTagDetail(s.records, explainKey) +
-      '</div>';
+      const infoIcon = showInfo ? '<span class="info-icon tooltip-target">i<span class="tooltip">' + escapeHtml(explain) + '</span></span>' : '';
+      return '<div class="bar-block ' + (isOpen ? 'open' : '') + '" data-key="' + escapeHtml(s.key) + '"><div class="bar-row"><div class="bar-caret">▶</div><div class="bar-label">' + s.canal + ' · ' + s.sub + infoIcon + '</div><div class="bar-track"><div class="bar-fill ' + (CANAL_CLASS[s.canal] || CANAL_CLASS['Outros']) + '" style="width:' + w + '%"></div></div><div class="bar-value">' + count + '</div></div>' + buildTagDetail(s.records, s.sub) + '</div>';
     }).join('');
-
     barsEl.querySelectorAll('.bar-block').forEach(block => {
       const row = block.querySelector('.bar-row');
       row.addEventListener('click', (e) => {
@@ -982,75 +1217,33 @@ function render() {
       btn.addEventListener('click', async (e) => {
         e.stopPropagation();
         const txt = btn.dataset.copy;
-        try {
-          await navigator.clipboard.writeText(txt);
-          btn.textContent = '✓'; btn.classList.add('copied');
-          setTimeout(() => { btn.textContent = '⧉'; btn.classList.remove('copied'); }, 1200);
-        } catch(err) {
-          const ta = document.createElement('textarea'); ta.value = txt;
-          document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
-          btn.textContent = '✓'; btn.classList.add('copied');
-          setTimeout(() => { btn.textContent = '⧉'; btn.classList.remove('copied'); }, 1200);
+        try { await navigator.clipboard.writeText(txt); } catch(err) {
+          const ta = document.createElement('textarea'); ta.value = txt; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
         }
+        btn.textContent = '✓'; btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = '⧉'; btn.classList.remove('copied'); }, 1200);
       });
     });
   }
 
-  // Time series
   renderTimeSeries(data, fromIso, toIso);
-
-  // Funnel
-  renderFunnel(data, leadsData);
-
-  // Lead time
-  renderLeadTime(data);
-
-  // Cidades (sempre quebrado por unidade, ignora tab unidade)
-  // Mas se tiver tab unidade selecionada, mostra só essa
-  if (currentUnit === 'all') {
-    renderCidades(data);
-  } else {
-    renderCidades(data); // já filtrado por unidade
-  }
-
-  // Lista pagos
-  const listEl = document.getElementById('list');
-  document.getElementById('list-count').textContent = '· ' + total;
-  if (data.length === 0) {
-    listEl.innerHTML = '<div class="empty">Nenhum pago neste período</div>';
-  } else {
-    const sorted = [...data].sort((a,b) => (b.iso || '').localeCompare(a.iso || ''));
-    listEl.innerHTML = sorted.map(r => {
-      const meta = [r.cidade, r.data, r.ingresso].filter(Boolean).join(' · ');
-      const lt = (r.lt != null) ? ` · ${r.lt}d`: '';
-      return '<div class="list-item">' +
-        '<div><div class="item-nome">' + escapeHtml(r.nome) + '</div>' +
-        '<div class="item-meta">' + escapeHtml(meta) + ' · ' + r.unidade + lt + '</div></div>' +
-        '<div class="badge ' + (CANAL_CLASS[r.canal] || CANAL_CLASS['Outros']) + '">' + r.canal + ' · ' + r.subcanal + '</div>' +
-      '</div>';
-    }).join('');
-  }
+  renderFunnel(paidData, leadsData);
+  renderLeadTime(currentStatus === 'pagos' ? paidData : []);
+  renderPaymentMethods(paidData);
+  renderDemografia(data);
+  renderCidades(data);
 }
 
 // === init ===
 function init() {
-  // Date inputs bounds
   const f = document.getElementById('date-from');
   const t = document.getElementById('date-to');
   f.min = DATA_MIN; f.max = INPUT_MAX; f.value = DATA_MIN;
   t.min = DATA_MIN; t.max = INPUT_MAX; t.value = DATA_MAX;
 
   buildIngressoChips();
-
-  // Tabs
-  document.querySelectorAll('.tab').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      currentUnit = btn.dataset.unit;
-      render();
-    });
-  });
+  buildStatusChips();
+  buildUnitTabs();
 
   ['date-from','date-to'].forEach(id => {
     document.getElementById(id).addEventListener('change', () => {
@@ -1146,6 +1339,8 @@ async function bootstrapDashboard() {
     LEADS = Array.isArray(payload.leads) ? payload.leads : [];
     if (info) info.textContent = `Dados carregados: ${PAGOS.length} pagos e ${LEADS.length} inscrições/leads. Montando dashboard...`;
     normalizeLoadedRows();
+    AVAILABLE_UNITS = computeAvailableUnits();
+    PAID_KEY_SET = getPaidKeySet();
     rebuildIngressoOptions();
     recomputeDateRange();
     init();
