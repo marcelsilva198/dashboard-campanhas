@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -456,7 +457,7 @@ const SUB_EXPLAIN = {
   'Não rastreado': 'Sem origem identificada — provavelmente cadastro manual, indicação ou presencial.'
 };
 
-const INGRESSO_OPTIONS = ['Vestibular', 'ENEM', 'Transf. Grupo III', '2ª Graduação', 'Transf. Grupo II', 'Cert. Internacional', 'Outros'];
+let INGRESSO_OPTIONS = ['Vestibular', 'ENEM', 'Transf. Grupo III', '2ª Graduação', 'Transf. Grupo II', 'Cert. Internacional', 'Outros'];
 
 let pieChart = null, tsChart = null;
 let currentUnit = 'all';
@@ -513,6 +514,60 @@ function median(arr) {
   const s = [...arr].sort((a,b)=>a-b);
   const m = Math.floor(s.length/2);
   return s.length % 2 ? s[m] : (s[m-1]+s[m])/2;
+}
+
+
+function normalizeIngressoLabel(value) {
+  const original = (value == null ? '' : String(value)).trim();
+  const s = original.toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
+  if (!s) return 'Outros';
+  if (s.includes('enem')) return 'ENEM';
+  if (s.includes('grupo iii') || s.includes('grupo 3')) return 'Transf. Grupo III';
+  if (s.includes('grupo ii') || s.includes('grupo 2')) return 'Transf. Grupo II';
+  if ((s.includes('2') || s.includes('segunda')) && (s.includes('graduacao') || s.includes('graduação'))) return '2ª Graduação';
+  if (s.includes('cert') || s.includes('internacional')) return 'Cert. Internacional';
+  if (s.includes('vestibular') || s.includes('prova') || s.includes('online')) return 'Vestibular';
+  return original || 'Outros';
+}
+
+function normalizeLoadedRows() {
+  PAGOS = PAGOS.map(r => ({
+    ...r,
+    unidade: r.unidade || r.u || '',
+    iso: r.iso || r.i || '',
+    insc_iso: r.insc_iso || r.i || '',
+    canal: r.canal || r.c || 'Outros',
+    subcanal: r.subcanal || r.s || 'Não rastreado',
+    stage: r.stage || r.sg || 'Orgânico',
+    tag: r.tag || r.t || '',
+    ingresso: normalizeIngressoLabel(r.ingresso || r.g)
+  }));
+
+  LEADS = LEADS.map(r => ({
+    ...r,
+    u: r.u || r.unidade || '',
+    i: r.i || r.iso || r.insc_iso || '',
+    c: r.c || r.canal || 'Outros',
+    s: r.s || r.subcanal || 'Não rastreado',
+    sg: r.sg || r.stage || 'Orgânico',
+    t: r.t || r.tag || '',
+    g: normalizeIngressoLabel(r.g || r.ingresso)
+  }));
+}
+
+function rebuildIngressoOptions() {
+  const preferred = ['Vestibular', 'ENEM', 'Transf. Grupo III', '2ª Graduação', 'Transf. Grupo II', 'Cert. Internacional', 'Outros'];
+  const found = new Set();
+  PAGOS.forEach(r => { if (r.ingresso) found.add(r.ingresso); });
+  LEADS.forEach(r => { if (r.g) found.add(r.g); });
+
+  const ordered = preferred.filter(x => found.has(x));
+  const extra = [...found].filter(x => !preferred.includes(x)).sort((a,b) => a.localeCompare(b, 'pt-BR'));
+  INGRESSO_OPTIONS = ordered.concat(extra);
+  if (!INGRESSO_OPTIONS.length) INGRESSO_OPTIONS = ['Outros'];
+  activeIngressos = new Set(INGRESSO_OPTIONS);
 }
 
 function filterPagos(unit, fromIso, toIso, ingressos, q) {
@@ -1044,6 +1099,8 @@ async function bootstrapDashboard() {
 
     PAGOS = Array.isArray(payload.pagos) ? payload.pagos : [];
     LEADS = Array.isArray(payload.leads) ? payload.leads : [];
+    normalizeLoadedRows();
+    rebuildIngressoOptions();
     recomputeDateRange();
     init();
   } catch (err) {
