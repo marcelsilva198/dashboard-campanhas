@@ -411,6 +411,13 @@ const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzBLmswFXgdsw1t
 let PAGOS = [];
 let LEADS = [];
 
+window.addEventListener('error', function(event) {
+  const info = document.getElementById('filter-info');
+  if (info && info.textContent && info.textContent.includes('Carregando')) {
+    info.innerHTML = '<strong>Erro no HTML:</strong> ' + escapeHtml(event.message || 'erro desconhecido');
+  }
+});
+
 const TODAY_ISO = (() => {
   const d = new Date();
   return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
@@ -421,7 +428,9 @@ let DATA_MAX = TODAY_ISO;
 let INPUT_MAX = TODAY_ISO;
 
 function recomputeDateRange() {
-  const _isos = PAGOS.map(r => r.iso).filter(Boolean).concat(LEADS.map(r => r.iso).filter(Boolean));
+  const pagosBase = PAGOS.filter(r => isDashboardUnidade(r.unidade));
+  const leadsBase = LEADS.filter(r => isDashboardUnidade(r.u));
+  const _isos = pagosBase.map(r => r.iso).filter(Boolean).concat(leadsBase.map(r => r.i).filter(Boolean));
   _isos.sort();
   DATA_MIN = _isos[0] || TODAY_ISO;
   DATA_MAX = _isos[_isos.length - 1] || TODAY_ISO;
@@ -437,6 +446,13 @@ const CANAL_CLASS = {
   'E-mail': 'c-email', 'Orgânico': 'c-organico', 'Social': 'c-social', 'Outros': 'c-outros'
 };
 const CANAL_ORDER = ['Google','Meta','TikTok','E-mail','Orgânico','Social','Outros'];
+
+// Unidades oficiais deste dashboard. A aba "Todas as unidades" soma apenas estas duas,
+// para não incluir registros de outras unidades/ambientes que também aparecem na planilha.
+const DASHBOARD_UNITS = ['Limeira', 'Arcoverde'];
+function isDashboardUnidade(value) {
+  return DASHBOARD_UNITS.includes(value);
+}
 
 const SUB_EXPLAIN = {
   'Conversão · Search Marca': 'Buscas diretas pelo nome da escola no Google. Custo baixo, intenção altíssima.',
@@ -560,8 +576,8 @@ function normalizeLoadedRows() {
 function rebuildIngressoOptions() {
   const preferred = ['Vestibular', 'ENEM', 'Transf. Grupo III', '2ª Graduação', 'Transf. Grupo II', 'Cert. Internacional', 'Outros'];
   const found = new Set();
-  PAGOS.forEach(r => { if (r.ingresso) found.add(r.ingresso); });
-  LEADS.forEach(r => { if (r.g) found.add(r.g); });
+  PAGOS.forEach(r => { if (isDashboardUnidade(r.unidade) && r.ingresso) found.add(r.ingresso); });
+  LEADS.forEach(r => { if (isDashboardUnidade(r.u) && r.g) found.add(r.g); });
 
   const ordered = preferred.filter(x => found.has(x));
   const extra = [...found].filter(x => !preferred.includes(x)).sort((a,b) => a.localeCompare(b, 'pt-BR'));
@@ -572,7 +588,11 @@ function rebuildIngressoOptions() {
 
 function filterPagos(unit, fromIso, toIso, ingressos, q) {
   return PAGOS.filter(r => {
-    if (unit !== 'all' && r.unidade !== unit) return false;
+    if (unit === 'all') {
+      if (!isDashboardUnidade(r.unidade)) return false;
+    } else if (r.unidade !== unit) {
+      return false;
+    }
     if (!r.iso || r.iso < fromIso || r.iso > toIso) return false;
     if (ingressos && !ingressos.has(r.ingresso)) return false;
     if (q && !(r.tag||'').toLowerCase().includes(q)) return false;
@@ -581,7 +601,11 @@ function filterPagos(unit, fromIso, toIso, ingressos, q) {
 }
 function filterLeads(unit, fromIso, toIso, ingressos, q) {
   return LEADS.filter(r => {
-    if (unit !== 'all' && r.u !== unit) return false;
+    if (unit === 'all') {
+      if (!isDashboardUnidade(r.u)) return false;
+    } else if (r.u !== unit) {
+      return false;
+    }
     if (!r.i || r.i < fromIso || r.i > toIso) return false;
     if (ingressos && !ingressos.has(r.g)) return false;
     if (q && !(r.t||'').toLowerCase().includes(q)) return false;
@@ -673,6 +697,14 @@ function renderTimeSeries(pagos, fromIso, toIso) {
     return slice.reduce((a,b)=>a+b, 0) / slice.length;
   });
 
+  if (typeof Chart === 'undefined') {
+    const wrap = document.querySelector('.ts-wrap');
+    if (wrap) {
+      const totalPeriodo = counts.reduce((a,b)=>a+b,0);
+      wrap.innerHTML = '<div class="empty">Chart.js não carregou, mas os dados foram recebidos. Total no período: ' + totalPeriodo + ' pagos.</div>';
+    }
+    return;
+  }
   if (tsChart) { tsChart.destroy(); tsChart = null; }
   const ctx = document.getElementById('ts-chart').getContext('2d');
   const cardBg = getComputedStyle(document.body).getPropertyValue('--bg-card').trim() || '#133772';
@@ -713,11 +745,12 @@ function renderTimeSeries(pagos, fromIso, toIso) {
 function renderFunnel(pagos, leads) {
   const byCanal = {};
   CANAL_ORDER.forEach(c => byCanal[c] = { leads: 0, pagos: 0 });
-  pagos.forEach(r => { byCanal[r.canal].pagos++; });
+  pagos.forEach(r => { byCanal[r.canal] = byCanal[r.canal] || { leads: 0, pagos: 0 }; byCanal[r.canal].pagos++; });
   leads.forEach(r => { byCanal[r.c] = byCanal[r.c] || { leads: 0, pagos: 0 }; byCanal[r.c].leads++; });
   // total inscriçoes (leads + pagos) — usar isso como denominador
-  const rows = CANAL_ORDER
-    .filter(c => (byCanal[c].leads + byCanal[c].pagos) > 0)
+  const canalRowsOrder = CANAL_ORDER.concat(Object.keys(byCanal).filter(c => !CANAL_ORDER.includes(c)));
+  const rows = canalRowsOrder
+    .filter(c => byCanal[c] && (byCanal[c].leads + byCanal[c].pagos) > 0)
     .map(c => {
       const l = byCanal[c].leads, p = byCanal[c].pagos;
       const tot = l + p;
@@ -732,7 +765,7 @@ function renderFunnel(pagos, leads) {
   el.innerHTML = rows.map(r => {
     const wTotal = (100 * r.total / maxTot).toFixed(1);
     const wPago = r.total ? (100 * r.pagos / r.total).toFixed(1) : 0;
-    const cls = CANAL_CLASS[r.canal];
+    const cls = CANAL_CLASS[r.canal] || CANAL_CLASS['Outros'];
     return `<div class="fn-row">
       <div class="fn-label">${r.canal}</div>
       <div class="fn-stack" style="width:${wTotal}%;">
@@ -761,7 +794,7 @@ function renderLeadTime(pagos) {
   const maxAvg = Math.max(...rows.map(r => r.avg), 1);
   el.innerHTML = rows.map(r => {
     const w = (100 * r.avg / maxAvg).toFixed(1);
-    const cls = CANAL_CLASS[r.canal];
+    const cls = CANAL_CLASS[r.canal] || CANAL_CLASS['Outros'];
     const valStr = r.avg < 1 ? r.avg.toFixed(1) + 'd' : r.avg.toFixed(1) + 'd';
     return `<div class="lt-row">
       <div class="lt-label">${r.canal} <span style="color:var(--text-muted); font-weight:400; font-size:10px;">n=${r.n}</span></div>
@@ -814,6 +847,7 @@ function render() {
   else if (sameDay) info = 'Período: ' + fmtBR(fromIso);
   else info = 'Período: ' + fmtBR(fromIso) + ' – ' + fmtBR(toIso) + ' · ' + days + ' dias';
   if (!fullRange) info += ' · vs período anterior (' + fmtBR(prevFrom) + ' – ' + fmtBR(prevTo) + ')';
+  if (currentUnit === 'all') info += ' · considerando apenas Limeira + Arcoverde';
   document.getElementById('filter-info').textContent = info;
 
   // KPIs
@@ -863,9 +897,10 @@ function render() {
   const subList = Object.values(subMap).sort((a,b) => b.records.length - a.records.length);
 
   // Donut
-  const labels = CANAL_ORDER.filter(c => canalCounts[c] > 0);
+  const allCanals = Object.keys(canalCounts).filter(c => canalCounts[c] > 0);
+  const labels = CANAL_ORDER.filter(c => canalCounts[c] > 0).concat(allCanals.filter(c => !CANAL_ORDER.includes(c)));
   const values = labels.map(c => canalCounts[c]);
-  const colors = labels.map(c => CANAL_COLORS[c]);
+  const colors = labels.map(c => CANAL_COLORS[c] || CANAL_COLORS['Outros']);
   if (pieChart) { pieChart.destroy(); pieChart = null; }
   const donutArea = document.getElementById('donut-area');
   if (total === 0) {
@@ -877,6 +912,12 @@ function render() {
         '</div><div class="legend" id="legend"></div>';
     }
     document.getElementById('donut-total').textContent = total;
+    if (typeof Chart === 'undefined') {
+      document.getElementById('legend').innerHTML = labels.map((c, i) => {
+        const v = values[i]; const p = total > 0 ? Math.round(100 * v / total) : 0;
+        return '<div class="legend-item"><div class="swatch" style="background:' + colors[i] + '"></div>' + c + ' · ' + v + ' (' + p + '%)</div>';
+      }).join('');
+    } else {
     const ctx = document.getElementById('donut').getContext('2d');
     const cardBg = getComputedStyle(document.body).getPropertyValue('--bg-card').trim() || '#133772';
     pieChart = new Chart(ctx, {
@@ -898,6 +939,7 @@ function render() {
       return '<div class="legend-item"><div class="swatch" style="background:' + colors[i] + '"></div>' +
              c + ' · ' + v + ' (' + p + '%)</div>';
     }).join('');
+    }
   }
 
   // Bars com expansão
@@ -984,7 +1026,7 @@ function render() {
       return '<div class="list-item">' +
         '<div><div class="item-nome">' + escapeHtml(r.nome) + '</div>' +
         '<div class="item-meta">' + escapeHtml(meta) + ' · ' + r.unidade + lt + '</div></div>' +
-        '<div class="badge ' + CANAL_CLASS[r.canal] + '">' + r.canal + ' · ' + r.subcanal + '</div>' +
+        '<div class="badge ' + (CANAL_CLASS[r.canal] || CANAL_CLASS['Outros']) + '">' + r.canal + ' · ' + r.subcanal + '</div>' +
       '</div>';
     }).join('');
   }
@@ -1058,8 +1100,8 @@ function loadDashboardPayload() {
     const script = document.createElement('script');
     const timeout = setTimeout(() => {
       cleanup();
-      reject(new Error('Tempo esgotado ao carregar dados do Apps Script.'));
-    }, 20000);
+      reject(new Error('Tempo esgotado ao carregar dados do Apps Script. A planilha pode estar pesada; tente novamente em alguns segundos.'));
+    }, 120000);
 
     function cleanup() {
       clearTimeout(timeout);
@@ -1068,6 +1110,9 @@ function loadDashboardPayload() {
     }
 
     window[callbackName] = (payload) => {
+      if (document.getElementById('filter-info')) {
+        document.getElementById('filter-info').textContent = 'Dados recebidos. Montando dashboard...';
+      }
       cleanup();
       resolve(payload);
     };
@@ -1094,11 +1139,12 @@ async function bootstrapDashboard() {
   try {
     const payload = await loadDashboardPayload();
     if (!payload || payload.ok === false) {
-      throw new Error((payload && payload.error) ? payload.error : 'Resposta inválida do Apps Script.');
+      throw new Error((payload && (payload.error || payload.erro)) ? (payload.error || payload.erro) : 'Resposta inválida do Apps Script.');
     }
 
     PAGOS = Array.isArray(payload.pagos) ? payload.pagos : [];
     LEADS = Array.isArray(payload.leads) ? payload.leads : [];
+    if (info) info.textContent = `Dados carregados: ${PAGOS.length} pagos e ${LEADS.length} inscrições/leads. Montando dashboard...`;
     normalizeLoadedRows();
     rebuildIngressoOptions();
     recomputeDateRange();
